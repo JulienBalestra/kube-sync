@@ -1,0 +1,95 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: kube-system
+  name: to-sync
+data:
+  foo: one
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kube-sync
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kube-sync
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - update
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kube-sync
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kube-sync
+subjects:
+- kind: ServiceAccount
+  name: kube-sync
+  namespace: kube-system
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-sync
+  namespace: kube-system
+  labels:
+    app: kube-sync
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-sync
+  template:
+    metadata:
+      labels:
+        app: kube-sync
+    spec:
+      serviceAccount: kube-sync
+      containers:
+      - name: kube-sync
+        image: quay.io/julienbalestra/kube-sync:master
+        command:
+        - /usr/local/bin/kube-sync
+        - kube-system # namespace
+        - to-sync # configmap name
+        - --sync-interval=10s # use a higher value in real life
+        - --prometheus-exporter-bind=0.0.0.0:8484
+        - -v=1
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 8484
+          initialDelaySeconds: 60
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /metrics
+            port: 8484
+          initialDelaySeconds: 45
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+---
