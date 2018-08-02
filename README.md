@@ -13,5 +13,5 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   annotations:
-    kube-sync: '{"ns":"kube-system","cm":"to-sync","uuid":"e00f2250-9624-11e8-95b1-5404a66983a9","ts":1533196912}'
+    kube-sync/source: '{"namespace":"kube-system","name":"to-sync","uid":"2ba4f600-883f-11e8-ae10-42010a10e004","resourceVersion":"47067967","last-update":1533203794}'
 ```
