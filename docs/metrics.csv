@@ -24,6 +24,8 @@ name,type,help
 "go_memstats_stack_inuse_bytes","GAUGE","Number of bytes in use by the stack allocator."
 "go_memstats_stack_sys_bytes","GAUGE","Number of bytes obtained from system for stack allocator."
 "go_memstats_sys_bytes","GAUGE","Number of bytes obtained by system. Sum of all system allocations."
+"kubernetes_cm_errors_latency_seconds","HISTOGRAM","Latency of configmap errors"
+"kubernetes_cm_synced","GAUGE","Kubernetes confimap actually synced"
 "kubernetes_cm_update_errors","COUNTER","Total number of Kubernetes configmap updated errors"
 "kubernetes_cm_update_latency_seconds","HISTOGRAM","Latency of configmap update"
 "kubernetes_cm_updates","COUNTER","Total number of Kubernetes configmap successfully updated"
