@@ -1,0 +1,25 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: workflow-controller
+  namespace: argo
+spec:
+  selector:
+    matchLabels:
+      app: workflow-controller
+  template:
+    metadata:
+      labels:
+        app: workflow-controller
+    spec:
+      serviceAccountName: default
+      containers:
+      - name: workflow-controller
+        image: argoproj/workflow-controller:latest
+        command:
+        - workflow-controller
+        args:
+        - --configmap
+        - workflow-controller-configmap
+        - --executor-image
+        - argoproj/argoexec:latest
