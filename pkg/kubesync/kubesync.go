@@ -255,12 +255,13 @@ func (s *KubeSync) Sync() error {
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 	defer signal.Reset(syscall.SIGINT, syscall.SIGTERM)
 
+	s.registerListeners()
+
 	// Sync once and fail fast to crash the Pod in case of error
 	err := s.processSync()
 	if err != nil {
 		return err
 	}
-	s.registerListeners()
 
 	ticker := time.NewTicker(s.Conf.SyncInterval)
 	defer ticker.Stop()
